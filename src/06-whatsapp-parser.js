@@ -38,6 +38,62 @@
  *   // => { date: "01/12/2024", time: "09:15", sender: "Priya",
  *   //      text: "I love this song", wordCount: 4, sentiment: "love" }
  */
+
 export function parseWhatsAppMessage(message) {
   // Your code here
+  if (typeof message !== "string") {
+    return null;
+  }
+
+  if (!message.includes(" - ") || !message.includes(": ")) {
+    return null;
+  }
+
+  // All extraction process
+  const extractedDate = message.slice(0, 10);
+  const extractedTime = message.slice(12, 17);
+  const senderNamePositionStart = message.indexOf(" - ") + 3;
+  const senderNamePositionEnd = message.indexOf(": ", senderNamePositionStart);
+  const extractedSenderName = message.slice(
+    senderNamePositionStart,
+    senderNamePositionEnd,
+  );
+
+  const messasgeStart = message.indexOf(": ") + 2;
+  const extractedMessasge = message.slice(messasgeStart).trim();
+
+  const wordCount = extractedMessasge.split(/\s+/).length;
+
+  // Sentiment Detection
+  const msg = extractedMessasge.toLowerCase();
+  let sentiment = "";
+
+  if (msg.includes("😂") || msg.includes(":)") || msg.includes("haha")) {
+    sentiment = "funny";
+  } else if (
+    msg.includes("❤") ||
+    msg.includes("love") ||
+    msg.includes("pyaar")
+  ) {
+    sentiment = "love";
+  } else {
+    sentiment = "neutral";
+  }
+
+  console.log(extractedDate);
+  console.log(extractedTime);
+  console.log(extractedSenderName);
+  console.log(extractedMessasge);
+  console.log(wordCount);
+
+  return {
+    date: extractedDate,
+    time: extractedTime,
+    sender: extractedSenderName,
+    text: extractedMessasge,
+    wordCount: wordCount,
+    sentiment: sentiment,
+  };
 }
+
+parseWhatsAppMessage("25/01/2025, 14:30 - Rahul: Bhai party kab hai? 😂");

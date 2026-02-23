@@ -36,11 +36,56 @@
  *
  * @example
  *   generateLocalPass({ name: "rahul sharma", from: "dadar", to: "andheri", classType: "first" })
- *   // => "MUMBAI LOCAL PASS\n---\nName: RAHUL SHARMA\nFrom: Dadar\nTo: Andheri\nClass: FIRST\nPass ID: FDADAND"
+ *   // => "MUMBAI LOCAL PASS\n---\n
+ *          Name: RAHUL SHARMA\n
+ *          From: Dadar\n
+ *          To: Andheri\n
+ *          Class: FIRST\n
+ *          Pass ID: FDADAND"
  *
  *   generateLocalPass(null)
  *   // => "INVALID PASS"
  */
 export function generateLocalPass(passenger) {
   // Your code here
+  if (typeof passenger !== "object" || passenger === null) {
+    return "INVALID PASS";
+  }
+
+  if (
+    !passenger.name ||
+    !passenger.from ||
+    !passenger.to ||
+    !passenger.classType
+  ) {
+    return "INVALID PASS";
+  }
+
+  const casInsentativeClassType = passenger.classType.toLowerCase();
+
+  if (
+    casInsentativeClassType !== "first" &&
+    casInsentativeClassType !== "second"
+  ) {
+    return "INVALID PASS";
+  }
+
+  const classTypeLetter = passenger.classType.charAt(0).toUpperCase();
+  const fromLetter = passenger.from.slice(0, 3).toUpperCase();
+  const toLetter = passenger.to.slice(0, 3).toUpperCase();
+
+  const passId = `${classTypeLetter}${fromLetter}${toLetter}`;
+
+  const mumbaiLocalPass = `MUMBAI LOCAL PASS\n---\nName: ${passenger.name.toUpperCase()}\nFrom: ${passenger.from.charAt(0).toUpperCase() + passenger.from.slice(1).toLowerCase()}\nTo: ${passenger.to.charAt(0).toUpperCase() + passenger.to.slice(1).toLowerCase()}\nClass: ${passenger.classType.toUpperCase()}\nPass ID: ${passId}`;
+
+  console.log(classTypeLetter, fromLetter, toLetter, passId);
+
+  return mumbaiLocalPass;
 }
+
+generateLocalPass({
+  name: "rahul sharma",
+  from: "dadar",
+  to: "andheri",
+  classType: "first",
+});

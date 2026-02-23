@@ -63,4 +63,90 @@
  */
 export function validateForm(formData) {
   // Your code here
+  const error = {};
+
+  // Form Name
+  const name = Object.values(formData.name.trim()).length;
+
+  if (!name || name < 2 || name > 50) {
+    error.name = "Name must be 2-50 characters";
+  }
+
+  // Form Email
+  const email = Object.values(formData.email);
+
+  const hasAt = email.includes("@");
+
+  const onlyOnAt = email.indexOf("@") === email.lastIndexOf("@");
+
+  const atIndex = email.indexOf("@");
+  const lasDotIndex = email.lastIndexOf(".");
+  const isValidEmail = lasDotIndex > atIndex;
+
+  if (
+    !hasAt ||
+    !onlyOnAt ||
+    !isValidEmail ||
+    typeof formData.email !== "string"
+  ) {
+    error.email = "Invalid email format";
+  }
+
+  // Form Phone
+
+  const phone = formData.phone;
+  const isValidNumber = typeof phone === "string" && phone.length === 10;
+  const isFirstDigit = phone.charAt(0);
+  const isDigit = /^\d+$/.test(phone);
+
+  if (
+    !isValidNumber ||
+    !["6", "7", "8", "9"].includes(isFirstDigit) ||
+    !isDigit
+  ) {
+    error.phone = "Invalid Indian phone number";
+  }
+
+  // Form Age
+  const isAgeValidInteger = parseInt(formData.age);
+  const isAgeValidNumber =
+    typeof formData.age === "number" || !isNaN(isAgeValidInteger);
+  const ageValue = Number(formData.age);
+
+  if (
+    !isAgeValidNumber ||
+    !Number.isInteger(ageValue) ||
+    ageValue < 16 ||
+    ageValue > 100
+  ) {
+    error.age = "Age must be an integer between 16 and 100";
+  }
+
+  // Form Pin
+  const pin = formData.pincode;
+  const isPinHasValidLength = pin.length === 6;
+  const pinFirstDigit = pin.charAt(0);
+
+  if (
+    ["0"].includes(pinFirstDigit) ||
+    !isPinHasValidLength ||
+    typeof pin !== "string" ||
+    !/^\d+$/.test(pin)
+  ) {
+    error.pincode = "Invalid Indian pincode";
+  }
+
+  // Form state
+  const state = formData.state ?? "";
+
+  if (typeof state !== "string" || !state.trim()) {
+    error.state = "State is required";
+  }
+
+  // Form Agree Terms
+  if (!Boolean(formData.agreeTerms)) {
+    error.agreeTerms = "Must agree to terms";
+  }
+
+  return { isValid: Object.keys(error).length === 0, errors: error };
 }

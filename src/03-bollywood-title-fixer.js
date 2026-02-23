@@ -31,4 +31,39 @@
  */
 export function fixBollywoodTitle(title) {
   // Your code here
+  if (typeof title !== "string" || title.trim() === "") {
+    return "";
+  }
+
+  const exceptionWords = [
+    "ka",
+    "ki",
+    "ke",
+    "se",
+    "aur",
+    "ya",
+    "the",
+    "of",
+    "in",
+    "a",
+    "an",
+  ];
+
+  // Exclude extra spaces in middle
+  const word = title.trim().toLocaleLowerCase().split(/\s+/);
+
+  const formattedTitle = word.map((w, i) => {
+    if (exceptionWords.includes(w) && i !== 0) {
+      return w;
+    }
+
+    console.log(w);
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  });
+  console.log(word);
+
+  console.log(formattedTitle);
+  return formattedTitle.join(" ");
 }
+
+fixBollywoodTitle("  DILWALE   DULHANIA   LE   JAYENGE  ");

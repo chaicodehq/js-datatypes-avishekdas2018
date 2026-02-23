@@ -48,4 +48,95 @@
  */
 export function analyzeUPITransactions(transactions) {
   // Your code here
+  if (
+    !Array.isArray(transactions) ||
+    transactions.length === 0 ||
+    !transactions
+  ) {
+    return null;
+  }
+  const filteredTransaction = transactions.filter(
+    (tran) =>
+      tran.amount > 0 && (tran.type === "credit" || tran.type === "debit"),
+  );
+
+  if (!filteredTransaction || filteredTransaction.length === 0) {
+    return null;
+  }
+
+  const totalCredit = filteredTransaction
+    .filter((tran) => tran.type === "credit")
+    .reduce((tc, tran) => {
+      const credit = tc + tran.amount;
+
+      return credit;
+    }, 0);
+
+  const totalDebit = filteredTransaction
+    .filter((tran) => tran.type === "debit")
+    .reduce((td, tran) => {
+      const debit = td + tran.amount;
+      return debit;
+    }, 0);
+
+  const netBalance = totalCredit - totalDebit;
+
+  const transactionCount = filteredTransaction.length;
+
+  const avgTransaction = Math.round(
+    filteredTransaction.reduce((sum, tran) => {
+      return sum + tran.amount / transactionCount;
+    }, 0),
+  );
+
+  const highestTransaction = filteredTransaction.reduce(
+    (highest, current) => {
+      return highest.amount > current.amount ? highest : current;
+    },
+    {
+      id: "any",
+      type: "any",
+      amount: 0,
+      to: "any",
+      category: "any",
+      date: "any",
+    },
+  );
+
+  const categoryBreakdown = filteredTransaction.reduce((category, tran) => {
+    category[tran.category] = tran.amount + (category[tran.category] || 0);
+
+    return category;
+  }, {});
+
+  let frequencyContact = "";
+  let maxCount = 0;
+
+  const frequencyCount = filteredTransaction.reduce((count, tran) => {
+    count[tran.to] = (count[tran.to] || 0) + 1;
+    if (count[tran.to] > maxCount) {
+      maxCount = count[tran.to];
+      frequencyContact = tran.to;
+    }
+    return count;
+  }, {});
+
+  const allAbove100 = filteredTransaction.every((tran) => tran.amount > 100);
+
+  const hasLargeTransaction = filteredTransaction.some(
+    (tran) => tran.amount >= 5000,
+  );
+
+  return {
+    totalCredit: totalCredit,
+    totalDebit: totalDebit,
+    netBalance: netBalance,
+    transactionCount: transactionCount,
+    avgTransaction: avgTransaction,
+    highestTransaction: highestTransaction,
+    categoryBreakdown: categoryBreakdown,
+    frequentContact: frequencyContact,
+    allAbove100: allAbove100,
+    hasLargeTransaction: hasLargeTransaction,
+  };
 }
